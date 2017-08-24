@@ -4,7 +4,10 @@ import RPi.GPIO as GPIO
 import MFRC522
 import signal
 import time
+import json
 from Reader import Reader
+from Sender import Sender
+from Cards import Cards
 
 continue_reading = True
 
@@ -48,8 +51,18 @@ while continue_reading:
                 isNewCard = currentReader.isNewCard(uid)
                 print(isNewCard)
                 if isNewCard:
-                    #TODO: send to BeddoMischer
-                    pass
-        time.sleep(0.2)
-        print("round")
+                    card = Cards()
+                    card = card.getCardFromUID(uid)
+                    if card is not None:
+                        dataDict = {
+                            "scope": "reader",
+                            "command": "card",
+                            "key": currentReader.id,
+                            "value": card
+                        }
 
+                        data = json.dumps(dataDict)
+
+                        sender = Sender("192.168.1.43", 9999, data)
+                        sender.send()
+        time.sleep(0.2)
