@@ -1,13 +1,16 @@
 class Reader:
 
-	def __init__(self, id, bus, reset):
+	def __init__(self, id, bus, subbus, reset):
 		self.id = id
 		self.bus = bus
+		self.subbus = subbus
 		self.reset = reset
+		self.activated = True
 		self.hold = []
 
 	def isNewCard(self, cardID):
-		if len(self.hold):
+		if len(self.hold) == 2:
+			self.activated = False
 			return False
 
 		if cardID not in self.hold:
@@ -18,3 +21,12 @@ class Reader:
 
 	def clearHold(self):
 		self.hold = []
+		self.activated = True
+
+	def __str__(self):
+		return "[Reader: id={}, bus={}, subbus={}, reset={}, hold={}, activated={}]".format(self.id,
+																							self.bus,
+																						  	self.subbus,
+																						  	self.reset,
+																						  	self.hold,
+																							self.activated)
