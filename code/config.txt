@@ -1,0 +1,40 @@
+{
+    "ip": "192.168.1.45",
+    "readers":[
+        {
+            "id":0,
+            "bus":0,
+            "subbus":0,
+            "reset":16,
+            "activated": true
+        },
+        {
+            "id":1,
+            "bus":0,
+            "subbus":1,
+            "reset":18,
+            "activated": true
+        },
+        {
+            "id":2,
+            "bus":1,
+            "subbus":0,
+            "reset":29,
+            "activated": true
+        },
+        {
+             "id":3,
+            "bus":1,
+            "subbus":1,
+            "reset":31,
+            "activated": true
+        },
+        {
+            "id":4,
+            "bus":1,
+            "subbus":2,
+            "reset":33,
+            "activated": true
+        }
+    ]
+}

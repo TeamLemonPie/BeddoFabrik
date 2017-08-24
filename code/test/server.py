@@ -6,7 +6,9 @@ serversocket = socket.socket(
 	        socket.AF_INET, socket.SOCK_STREAM) 
                    
 
-port = 9999                                           
+port = 9999
+
+print("Listening to connections on port {}...\n".format(port))                           
 
 # bind to the port
 serversocket.bind(('', port))                                  

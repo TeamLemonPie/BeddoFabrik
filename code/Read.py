@@ -5,9 +5,9 @@ import MFRC522
 import signal
 import time
 import json
-from Reader import Reader
 from Sender import Sender
 from Cards import Cards
+from Settings import Settings
 
 continue_reading = True
 
@@ -21,10 +21,8 @@ def end_read(signal, frame):
 # Hook the SIGINT
 signal.signal(signal.SIGINT, end_read)
 
-# List of readers
-readers = []
-readers.append(Reader(id=0, bus=0, subbus=0, reset=16))
-readers.append(Reader(id=1, bus=1, subbus=1, reset=31))
+settings = Settings()
+readers = settings.getReaders()
 
 print("{} devices registered:".format(len(readers)))
 for x in readers:
@@ -49,6 +47,7 @@ while continue_reading:
                 # if this method returns true then send new card to BeddoMischer
 
                 isNewCard = currentReader.isNewCard(uid)
+                # TODO: remove debug print
                 print(isNewCard)
                 if isNewCard:
                     card = Cards()
@@ -64,5 +63,6 @@ while continue_reading:
                         data = json.dumps(dataDict)
 
                         sender = Sender("192.168.1.43", 9999, data)
-                        sender.send()
+                        if not sender.send():
+                            currentReader.clearCardFromHold(uid)
         time.sleep(0.2)
