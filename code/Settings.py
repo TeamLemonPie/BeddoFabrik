@@ -8,6 +8,7 @@ class Settings:
 		data = json.loads(data)
 		self.ip = data["ip"]
 		self.readers = data["readers"]
+		self.server = data["server"]
 
 	def getReaders(self):
 		readerList = []

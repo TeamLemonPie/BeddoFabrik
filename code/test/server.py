@@ -22,5 +22,3 @@ while True:
 
     print("Got a connection from %s" % str(addr))
     print(clientsocket.recv(1024))
-   
-    clientsocket.close()

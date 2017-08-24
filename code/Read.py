@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 
 import RPi.GPIO as GPIO
+
 import MFRC522
 import signal
 import time
 import json
-from Sender import Sender
 from Cards import Cards
 from Settings import Settings
+from Connection import Connection
 
 continue_reading = True
 
@@ -17,16 +18,23 @@ def end_read(signal, frame):
     print("Ctrl+C captured, ending read.")
     continue_reading = False
     GPIO.cleanup()
+    connection.close()
 
 # Hook the SIGINT
 signal.signal(signal.SIGINT, end_read)
 
+# load settings
 settings = Settings()
 readers = settings.getReaders()
 
 print("{} devices registered:".format(len(readers)))
 for x in readers:
     print(x)
+
+connection = Connection()
+if not connection.connect(settings.server["ip"], settings.server["port"]):
+    continue_reading = False
+    exit()
 
 while continue_reading:
     for currentReader in readers:
@@ -44,7 +52,6 @@ while continue_reading:
             # If we have the UID, continue
             if status == reader.MI_OK:
                 uid = "-".join(map(str, uid))
-                # if this method returns true then send new card to BeddoMischer
 
                 isNewCard = currentReader.isNewCard(uid)
                 # TODO: remove debug print
@@ -62,7 +69,7 @@ while continue_reading:
 
                         data = json.dumps(dataDict)
 
-                        sender = Sender("192.168.1.43", 9999, data)
-                        if not sender.send():
+                        if not connection.send(data):
+                            # card could not be sent due to connection issues
                             currentReader.clearCardFromHold(uid)
         time.sleep(0.2)

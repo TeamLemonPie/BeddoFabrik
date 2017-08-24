@@ -25,6 +25,7 @@ class Reader:
 
 	def clearCardFromHold(self, cardID):
 		self.hold.remove(cardID)
+		self.activated = True
 
 	def __str__(self):
 		return "[Reader: id={}, bus={}, subbus={}, reset={}, hold={}, activated={}]".format(self.id,
