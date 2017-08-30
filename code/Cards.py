@@ -2,8 +2,8 @@ class Cards:
 
 	cards = {}
 	# DEBUG:
-	cards["106-31-8-133-248"] = "P7"
-	cards["154-98-11-133-118"] = "HA"
+	cards["106-31-8-133-248"] = "Pi-7"
+	cards["154-98-11-133-118"] = "He-A"
 	# TODO fill all cards
 
 	def getCardFromUID(self, uid):

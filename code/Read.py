@@ -68,7 +68,7 @@ while continue_reading:
                         }
 
                         data = json.dumps(dataDict)
-
+                        data += "\r\n"
                         if not connection.send(data):
                             # card could not be sent due to connection issues
                             currentReader.clearCardFromHold(uid)
