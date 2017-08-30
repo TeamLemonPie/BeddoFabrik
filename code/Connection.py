@@ -3,20 +3,23 @@ import time
 
 class Connection:
 
+	active = True
+
 	def __init__(self):
 		self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 	def connect(self, host, port):
+		print("Trying to connect to {}:{}...".format(host, port))
 		retryCount = 0
-		while retryCount < 5:
+		while self.active:
 			if self.___connect___(host, port):
+				self.active = False
+				print("Connection established.")
 				return True
 			else:
 				retryCount += 1
-				print("ERROR - can't connect to {}:{} - Retry {} of 5".format(host, port, retryCount))
+				print("ERROR - can't connect to {}:{} - Retry {}".format(host, port, retryCount))
 				time.sleep(1)
-		print("ERROR - can't connect to {}:{} - Giving up after 5 retries".format(host, port, retryCount))
-		return False
 
 	def ___connect___(self, host, port):
 		try:
@@ -35,5 +38,7 @@ class Connection:
 			self.socket.send(payload)
 			return True
 		except:
-			print("ERROR - can't send, will retry next time")
 			return False
+
+	def read(self):
+		return self.socket.recv(1024)

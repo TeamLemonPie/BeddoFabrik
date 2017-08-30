@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import RPi.GPIO as GPIO
+from sqlite3 import Connection
 
 import MFRC522
 import signal
@@ -9,6 +10,7 @@ import json
 from Cards import Cards
 from Settings import Settings
 from Connection import Connection
+from thread import start_new_thread
 
 continue_reading = True
 
@@ -18,6 +20,7 @@ def end_read(signal, frame):
     print("Ctrl+C captured, ending read.")
     continue_reading = False
     GPIO.cleanup()
+    connection.active = False
     connection.close()
 
 # Hook the SIGINT
@@ -32,9 +35,35 @@ for x in readers:
     print(x)
 
 connection = Connection()
-if not connection.connect(settings.server["ip"], settings.server["port"]):
-    continue_reading = False
-    exit()
+connection.connect(settings.server["ip"], settings.server["port"])
+
+def read():
+    global connection
+    while(True):
+        try:
+            data = connection.read()
+
+            data = data.strip()
+            if data != "":
+                try:
+                    data = json.loads(data)
+                    key = data["key"]
+                    print("Received Clear: {}".format(key))
+                    if key == -1:
+                        for reader in readers:
+                            reader.clearHold()
+                    else:
+                        for reader in readers:
+                            if reader.id == key:
+                                reader.clearHold()
+                except:
+                    print("Error while parsing JSON. Data: {}".format(data))
+        except:
+            if not connection.active:
+                connection = Connection()
+                connection.connect(settings.server["ip"], settings.server["port"])
+
+start_new_thread(read, ())
 
 while continue_reading:
     for currentReader in readers:
@@ -55,10 +84,10 @@ while continue_reading:
 
                 isNewCard = currentReader.isNewCard(uid)
                 # TODO: remove debug print
-                print(isNewCard)
                 if isNewCard:
                     card = Cards()
                     card = card.getCardFromUID(uid)
+                    print("Reader {} detected new card: {}".format(currentReader.id, card))
                     if card is not None:
                         dataDict = {
                             "scope": "reader",
@@ -70,6 +99,12 @@ while continue_reading:
                         data = json.dumps(dataDict)
                         data += "\r\n"
                         if not connection.send(data):
+                            print("Error while sending new card to server")
+                            if not connection.active:
+                                connection = Connection()
+                                connection.connect(settings.server["ip"], settings.server["port"])
                             # card could not be sent due to connection issues
                             currentReader.clearCardFromHold(uid)
+                else:
+                    print("Skipping detected card for reader {}".format(currentReader.id))
         time.sleep(0.2)
