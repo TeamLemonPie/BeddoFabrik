@@ -2,7 +2,7 @@ class Cards:
 
 	cards = {}
 	
-	# Piek
+	# Pik
 	cards["136-4-120-152-108"] = "Pi-2"
 	cards["136-4-131-152-151"] = "Pi-3"
 	cards["136-4-167-140-167"] = "Pi-4"

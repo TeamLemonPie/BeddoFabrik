@@ -8,6 +8,7 @@ import signal
 import time
 import json
 from Cards import Cards
+from ManageCards import ManageCards
 from Settings import Settings
 from Connection import Connection
 from thread import start_new_thread
@@ -39,7 +40,7 @@ connection.connect(settings.server["ip"], settings.server["port"])
 
 def read():
     global connection
-    while(True):
+    while True:
         try:
             data = connection.read()
 
@@ -82,11 +83,28 @@ while continue_reading:
             if status == reader.MI_OK:
                 uid = "-".join(map(str, uid))
 
-                isNewCard = currentReader.isNewCard(uid)
-                # TODO: remove debug print
-                if isNewCard:
-                    card = Cards()
-                    card = card.getCardFromUID(uid)
+                # check if detected card is manage card
+                manageCards = ManageCards()
+                manageCard = manageCards.getCardFromUID(uid)
+                if manageCard is not None:
+                    print("Reader {} detected manage card: {}".format(currentReader.id, manageCard))
+                    dataDict = {
+                        "scope": "reader",
+                        "command": "manageCard",
+                        "key": currentReader.id,
+                        "value": manageCard
+                    }
+
+                    data = json.dumps(dataDict)
+                    data += "\r\n"
+                    if not connection.send(data):
+                        print("Error while sending manage card to server")
+                        if not connection.active:
+                            connection = Connection()
+                            connection.connect(settings.server["ip"], settings.server["port"])
+                elif currentReader.isNewCard(uid):
+                    cards = Cards()
+                    card = cards.getCardFromUID(uid)
                     print("Reader {} detected new card: {}".format(currentReader.id, card))
                     if card is not None:
                         dataDict = {
