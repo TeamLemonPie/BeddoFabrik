@@ -125,4 +125,6 @@ while continue_reading:
                             currentReader.clearCardFromHold(uid)
                 else:
                     print("Skipping detected card for reader {}".format(currentReader.id))
+
+            reader.Close()
         time.sleep(0.2)
