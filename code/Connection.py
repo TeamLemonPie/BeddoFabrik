@@ -1,5 +1,6 @@
 import socket
 import time
+from Logger import Logger
 
 class Connection:
 
@@ -9,16 +10,16 @@ class Connection:
 		self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 	def connect(self, host, port):
-		print("Trying to connect to {}:{}...".format(host, port))
+		Logger.info("Trying to connect to {}:{}...".format(host, port))
 		retryCount = 0
 		while self.active:
 			if self.___connect___(host, port):
 				self.active = False
-				print("Connection established.")
+				Logger.info("Connection established.")
 				return True
 			else:
 				retryCount += 1
-				print("ERROR - can't connect to {}:{} - Retry {}".format(host, port, retryCount))
+				Logger.error("can't connect to {}:{} - Retry {}".format(host, port, retryCount))
 				time.sleep(1)
 
 	def ___connect___(self, host, port):

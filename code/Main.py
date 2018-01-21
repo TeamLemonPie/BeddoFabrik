@@ -12,13 +12,15 @@ from ManageCards import ManageCards
 from Settings import Settings
 from Connection import Connection
 from thread import start_new_thread
+from Logger import Logger
 
 continue_reading = True
+
 
 # Capture SIGINT for cleanup when the script is aborted
 def end_read(signal, frame):
     global continue_reading
-    print("Ctrl+C captured, ending read.")
+    Logger.info("Ctrl+C captured, ending read.")
     continue_reading = False
     GPIO.cleanup()
     connection.active = False
@@ -31,9 +33,9 @@ signal.signal(signal.SIGINT, end_read)
 settings = Settings()
 readers = settings.getReaders()
 
-print("{} devices registered:".format(len(readers)))
+Logger.debug("{} devices registered:".format(len(readers)))
 for x in readers:
-    print(x)
+    Logger.debug(x)
 
 connection = Connection()
 connection.connect(settings.server["ip"], settings.server["port"])
@@ -49,7 +51,7 @@ def read():
                 try:
                     data = json.loads(data)
                     key = data["key"]
-                    print("Received Clear: {}".format(key))
+                    Logger.debug("Received Clear: {}".format(key))
                     if key == -1:
                         for reader in readers:
                             reader.clearHold()
@@ -58,7 +60,7 @@ def read():
                             if reader.id == key:
                                 reader.clearHold()
                 except:
-                    print("Error while parsing JSON. Data: {}".format(data))
+                    Logger.error("Error while parsing JSON. Data: {}".format(data))
         except:
             if not connection.active:
                 connection = Connection()
@@ -87,7 +89,7 @@ while continue_reading:
                 manageCards = ManageCards()
                 manageCard = manageCards.getCardFromUID(uid)
                 if manageCard is not None:
-                    print("Reader {} detected manage card: {}".format(currentReader.id, manageCard))
+                    Logger.debug("Reader {} detected manage card: {}".format(currentReader.id, manageCard))
                     dataDict = {
                         "scope": "reader",
                         "command": "manageCard",
@@ -98,14 +100,14 @@ while continue_reading:
                     data = json.dumps(dataDict)
                     data += "\r\n"
                     if not connection.send(data):
-                        print("Error while sending manage card to server")
+                        Logger.error("Error while sending manage card to server")
                         if not connection.active:
                             connection = Connection()
                             connection.connect(settings.server["ip"], settings.server["port"])
                 elif currentReader.isNewCard(uid):
                     cards = Cards()
                     card = cards.getCardFromUID(uid)
-                    print("Reader {} detected new card: {}".format(currentReader.id, card))
+                    Logger.debug("Reader {} detected new card: {}".format(currentReader.id, card))
                     if card is not None:
                         dataDict = {
                             "scope": "reader",
@@ -117,14 +119,14 @@ while continue_reading:
                         data = json.dumps(dataDict)
                         data += "\r\n"
                         if not connection.send(data):
-                            print("Error while sending new card to server")
+                            Logger.error("Error while sending new card to server")
                             if not connection.active:
                                 connection = Connection()
                                 connection.connect(settings.server["ip"], settings.server["port"])
                             # card could not be sent due to connection issues
                             currentReader.clearCardFromHold(uid)
                 else:
-                    print("Skipping detected card for reader {}".format(currentReader.id))
+                    Logger.debug("Skipping detected card for reader {}".format(currentReader.id))
 
             reader.Close()
         time.sleep(0.2)
