@@ -1,0 +1,1 @@
+./BeddoSSH.sh "sudo halt"
