@@ -91,7 +91,7 @@ while continue_reading:
                 if manageCard is not None:
                     Logger.debug("Reader {} detected manage card: {}".format(currentReader.id, manageCard))
                     dataDict = {
-                        "scope": "reader",
+                        "scope": "READER",
                         "command": "manageCard",
                         "key": currentReader.id,
                         "value": manageCard
@@ -110,7 +110,7 @@ while continue_reading:
                     Logger.debug("Reader {} detected new card: {}".format(currentReader.id, card))
                     if card is not None:
                         dataDict = {
-                            "scope": "reader",
+                            "scope": "READER",
                             "command": "card",
                             "key": currentReader.id,
                             "value": card
