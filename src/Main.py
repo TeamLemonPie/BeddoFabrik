@@ -48,19 +48,21 @@ def read():
 
             data = data.strip()
             if data != "":
-                try:
-                    data = json.loads(data)
-                    key = data["key"]
-                    Logger.debug("Received Clear: {}".format(key))
-                    if key == -1:
-                        for reader in readers:
-                            reader.clearHold()
-                    else:
-                        for reader in readers:
-                            if reader.id == key:
+                data = data.split("\n")
+                for line in data:
+                    try:
+                        obj = json.loads(line)
+                        key = obj["key"]
+                        Logger.debug("Received Clear: {}".format(key))
+                        if key == -1:
+                            for reader in readers:
                                 reader.clearHold()
-                except:
-                    Logger.error("Error while parsing JSON. Data: {}".format(data))
+                        else:
+                            for reader in readers:
+                                if reader.id == key:
+                                    reader.clearHold()
+                    except:
+                        Logger.error("Error while parsing JSON. Data: {}".format(line))
         except:
             if not connection.active:
                 connection = Connection()
