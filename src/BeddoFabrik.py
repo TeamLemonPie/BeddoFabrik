@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from subprocess import Popen, PIPE
 
 import RPi.GPIO as GPIO
 from sqlite3 import Connection
@@ -34,6 +35,12 @@ class BeddoFabrik:
 		for x in self._readers:
 			Logger.debug(x)
 
+		# wait for wifi
+		Logger.debug("Waiting for Wifi connection...")
+		while not self.__IsWifiConnected():
+			time.sleep(1)
+		Logger.debug("Wifi connected")
+
 		# discover BeddoMischer IP
 		discoverer = ServerDiscover()
 		self._beddoMischerIP = discoverer.Discover()
@@ -53,6 +60,15 @@ class BeddoFabrik:
 		GPIO.cleanup()
 		self._connection.active = False
 		self._connection.close()
+
+	def __IsWifiConnected(self):
+		process = Popen(['iwconfig', 'wlan0'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+		output, err = process.communicate(b"")
+		returnCode = process.returncode
+		if returnCode == 0 and "ESSID" in output:
+			return True
+
+		return False
 
 	def __Connect(self):
 		if self._connection is None or not self._connection.active:
