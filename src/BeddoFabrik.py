@@ -30,7 +30,7 @@ class BeddoFabrik:
 
 		# load settings
 		self._settings = Settings()
-		self._readers = self._readers
+		self._readers = self._settings.getReaders()
 		Logger.debug("{} devices registered:".format(len(self._readers)))
 		for x in self._readers:
 			Logger.debug(x)
