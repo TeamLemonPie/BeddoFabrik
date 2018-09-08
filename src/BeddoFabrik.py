@@ -42,8 +42,14 @@ class BeddoFabrik:
 		Logger.debug("Wifi connected")
 
 		# discover BeddoMischer IP
-		discoverer = ServerDiscover()
-		self._beddoMischerIP = discoverer.Discover()
+		while not self._beddoMischerIP:
+			try:
+				discoverer = ServerDiscover()
+				self._beddoMischerIP = discoverer.Discover()
+			except:
+				self._beddoMischerIP = None
+				Logger.error("Discovery failed")
+				time.sleep(1)
 
 		# connect with server
 		self.__Connect()
@@ -62,10 +68,10 @@ class BeddoFabrik:
 		self._connection.close()
 
 	def __IsWifiConnected(self):
-		process = Popen(['iwconfig', 'wlan0'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+		process = Popen(['/sbin/iwconfig', 'wlan0'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
 		output, err = process.communicate(b"")
 		returnCode = process.returncode
-		if returnCode == 0 and "ESSID" in output:
+		if returnCode == 0 and "BeddoLand" in output:
 			return True
 
 		return False
