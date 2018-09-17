@@ -1,0 +1,44 @@
+{
+    "ip": "192.168.178.49",
+    "server": {
+        "ip": "192.168.178.26",
+        "port": 9997
+    },
+    "readers":[
+        {
+            "id":8,
+            "bus":0,
+            "subbus":0,
+            "reset":16,
+            "activated": true
+        },
+        {
+            "id":7,
+            "bus":0,
+            "subbus":1,
+            "reset":18,
+            "activated": true
+        },
+        {
+            "id":10,
+            "bus":1,
+            "subbus":0,
+            "reset":29,
+            "activated": true
+        },
+        {
+            "id":11,
+            "bus":1,
+            "subbus":1,
+            "reset":31,
+            "activated": true
+        },
+        {
+            "id":9,
+            "bus":1,
+            "subbus":2,
+            "reset":33,
+            "activated": true
+        }
+    ]
+}
