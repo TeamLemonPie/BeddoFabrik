@@ -3,6 +3,8 @@
 BeddoFabrik is a tool in the "Beddo" product family.
 It's main purpose is to manage up to five NFC scanners that are connected to a Rasperry Pi Zero W and send information about detected cards to BeddoMischer.
 
+![](/build/resources/icon_112x112.png) (Icon made by <a href="https://www.flaticon.com/authors/vectors-market" title="Vectors Market">Vectors Market</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>)
+
 ### Main Features
 - can be used on any Rasperry Pi
 - allows to connect up to five NFC scanners (RC522 modules are used)
