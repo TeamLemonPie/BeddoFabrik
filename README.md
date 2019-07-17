@@ -32,5 +32,5 @@ Our particular setup includes seven player scanners and five board scanners. Tha
 ![](/build/resources/patch_panel.JPG)
 ![](/build/resources/complete_table.JPG)
 
-### Used Libraries
-![SPI-Py](https://github.com/lthiery/SPI-Py)
+#### Third Party Libraries
+* [SPI-Py](https://github.com/lthiery/SPI-Py)
