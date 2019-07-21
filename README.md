@@ -32,5 +32,8 @@ Our particular setup includes seven player scanners and five board scanners. Tha
 ![](/build/resources/patch_panel.JPG)
 ![](/build/resources/complete_table.JPG)
 
+### NFC poker cards
+The cards are equipped with Mifare Ultralight NFC chips. Poker card decks of this kind can be bought from various online shops.
+
 #### Third Party Libraries
 * [SPI-Py](https://github.com/lthiery/SPI-Py)
